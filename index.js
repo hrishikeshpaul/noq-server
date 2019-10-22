@@ -12,8 +12,8 @@ var auth = require('./routes/auth');
 
 var job = require('./routes/job')
 var profile = require('./routes/profile');
-var user = require('./routes/user')
-var oauth = require('./routes/oauth')
+var user = require('./routes/user');
+
 var home = require('./routes/test');
 const connectDB = require('./config/db');
 connectDB();
