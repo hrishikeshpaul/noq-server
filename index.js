@@ -30,6 +30,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/api/auth', auth);
-app.use('/auth/linkedin', oauth)
+//app.use('/auth/linkedin', oauth)
 app.use('/api/user', user)
 app.use('/api/profile', profile);
