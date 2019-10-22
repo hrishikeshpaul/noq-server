@@ -13,7 +13,7 @@ var auth = require('./routes/auth');
 var job = require('./routes/job')
 var profile = require('./routes/profile');
 var user = require('./routes/user');
-
+var oauth = require('./routes/oauth');
 var home = require('./routes/test');
 const connectDB = require('./config/db');
 connectDB();
@@ -30,6 +30,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/api/auth', auth);
-//app.use('/auth/linkedin', oauth)
+app.use('/auth/linkedin', oauth)
 app.use('/api/user', user)
 app.use('/api/profile', profile);
