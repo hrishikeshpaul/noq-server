@@ -8,7 +8,10 @@ var Education = require('../models/Education')
 var Experience = require('../models/Experience')
 const { check, validationResult } = require('express-validator')
 
-
+router.get('/', function (req, res, next) {
+	res.send('yay');
+}
+)
 router.post('/updateRole', passport.authenticate('jwt', { session: false }), function (req, res, next) {
 	console.log(req.body)
 	User.findOneAndUpdate({ _id: req.body.user }, { $set: { role: req.body.role } }, function (err, succ) {
