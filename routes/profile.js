@@ -8,10 +8,7 @@ var Education = require('../models/Education')
 var Experience = require('../models/Experience')
 const { check, validationResult } = require('express-validator')
 
-router.get('/', function (req, res, next) {
-	res.send('yay');
-}
-)
+
 router.post('/updateRole', passport.authenticate('jwt', { session: false }), function (req, res, next) {
 	console.log(req.body)
 	User.findOneAndUpdate({ _id: req.body.user }, { $set: { role: req.body.role } }, function (err, succ) {
@@ -52,29 +49,45 @@ router.post('/personal', passport.authenticate('jwt', { session: false }), funct
 
 /*
 * Only education
-* PUT, DELETE route to come after profile page is made!
 */
 router.post('/education', passport.authenticate('jwt', { session: false }), function (req, res, err) {
-
+	console.log(req.body)
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(400).json({ errors: errors.array() });
 	}
-	console.log(req.body)
-
 	req.body.data.forEach(education => {
 		new Education(education).save(function (err, edu) {
 			if (err)
-				return res.status(400).send('Could not save education')
+				console.log('Education can\'t be saved')
 			User.updateOne({ _id: req.body.user.id }, { $addToSet: { education: edu._id } }, function (err, success) {
 				if (err)
-					return res.status(400).send('Could not be sent')
+					console.log(err)
 			})
 		})
 	})
 	return res.status(201).send('Saved')
 })
 
+router.patch('/education/:id', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+	Education.findOneAndUpdate({ _id: req.params.id }, { $set: req.body }, function (err, succ) {
+		if (err)
+			return res.status(400).send('Error')
+		else return res.status(200).send('Done')
+	})
+})
+
+/**
+ * Does not cascade DELETE
+**/
+
+router.delete('/education/:id', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+	Education.remove({ _id: req.params.id }, function (err, succ) {
+		if (err)
+			return res.status(400).send('Error')
+		else return res.status(200).send('Done')
+	})
+})
 
 /*
 * Only experience
@@ -90,7 +103,7 @@ router.post('/experience', passport.authenticate('jwt', { session: false }), fun
 	req.body.data.forEach(experience => {
 		new Experience(experience).save(function (err, exp) {
 			if (err)
-				return res.status(400).send('Could not save education')
+				return res.status(400).send('Could not save experience')
 			User.updateOne({ _id: req.body.user.id }, { $addToSet: { experience: exp._id } }, function (err, success) {
 				if (err)
 					return res.status(400).send('Could not be sent')
@@ -100,28 +113,44 @@ router.post('/experience', passport.authenticate('jwt', { session: false }), fun
 	return res.status(201).send('Saved')
 })
 
+router.patch('/experience/:id', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+	Experience.findOneAndUpdate({ _id: req.params.id }, { $set: req.body }, function (err, succ) {
+		if (err)
+			return res.status(400).send('Error')
+		else return res.status(200).send('Done')
+	})
+})
+
+/**
+ * Does not cascade DELETE
+ **/
+
+router.delete('/experience/:id', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+	Experience.remove({ _id: req.params.id }, function (err, succ) {
+		if (err)
+			return res.status(400).send('Error')
+		else return res.status(200).send('Done')
+	})
+})
+
 /*
 * Only skills
 * PUT route to come after profile page is made!
 */
 router.post('/skills', passport.authenticate('jwt', { session: false }), function (req, res, err) {
-
+	console.log(req.body.data)
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(400).json({ errors: errors.array() })
 	}
 
-	console.log(req.body.data.length)
-
 	if (req.body.data.length > 0) {
-		req.body.data.forEach(skill => {
-			User.updateOne({ _id: req.body.user.id }, { $addToSet: { skills: skill } }, function (err, success) {
-				if (err) {
-					return res.status(400).send('Could not be sent')
-				}
-			})
+		User.updateOne({ _id: req.body.user.id }, { $set: { skills: req.body.data } }, function (err, succc) {
+			if (err)
+				console.log(err)
+			else return res.status(201).send('Saved')
 		})
-		return res.status(201).send('Saved')
+
 	} else {
 		return res.status(200).send('Nothing added')
 	}

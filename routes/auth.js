@@ -21,7 +21,6 @@ router.post('/register', function (req, res) {
 			password: req.body.password,
 			role: req.body.role
 		})
-		//	console.log(newUser);
 		// save the user
 		newUser.save(function (err) {
 			if (err) {
@@ -32,12 +31,16 @@ router.post('/register', function (req, res) {
 			var token = new Token({ _userId: newUser._id, token: crypto.randomBytes(16).toString('hex') })
 			token.save(function (err) {
 				if (err) {
-					return res.status(500).send({ msg: err.message })
+					console.log(err)
+					return res.status(501).send({ msg: err.message })
 				}
 
 				var transporter = nodemailer.createTransport({
-					service: 'Sendgrid',
-					auth: { user: 'hrishikeshpaul', pass: 'Keshpaul1996' }
+					service: 'gmail',
+					auth: {
+						user: 'colen81@gmail.com',
+						pass: 'Cassidy2011rip.'
+					}
 				});
 				var mailOptions = {
 					from: 'noq-reply@noq.com',
@@ -47,7 +50,7 @@ router.post('/register', function (req, res) {
 				}
 				transporter.sendMail(mailOptions, function (err) {
 					if (err) {
-						return res.status(500).send({ msg: err.message })
+						console.log(err)
 					}
 
 					return res.status(200).send({ success: true, msg: 'A verification email has been sent to ' + newUser.email + '.' })

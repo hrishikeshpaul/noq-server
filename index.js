@@ -34,4 +34,4 @@ app.use('/api/auth', auth);
 app.use('/auth/linkedin', oauth)
 app.use('/api/user', user);
 app.use('/api/profile', profile);
-app.use('/api/jobs', job);
+app.use('/api/jobs', passport.authenticate('jwt', { session: false }), job);

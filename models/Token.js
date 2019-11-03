@@ -1,10 +1,41 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose')
+const ProfileSchema = new mongoose.Schema({
+	user: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'user'
+	},
+	company: {
+		type: String
+	},
+	website: {
+		type: String
+	},
+	location: {
+		type: String
+	},
+	status: {
+		type: String
+	},
+	skills: {
+		type: [String],
+	},
+	bio: {
+		type: String
+	},
+	experience: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Experience' }],
+	education: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Education' }],
+	social: {
+		youtube: {
+			type: String
+		},
+		linkedin: {
+			type: String
+		}
+	},
+	date: {
+		type: Date,
+		default: Date.now
+	}
+})
 
-const tokenSchema = new Schema({
-  _userId: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
-  token: { type: String, required: true },
-  createdAt: { type: Date, required: true, default: Date.now, expires: 43200 }
-});
-
-module.exports = mongoose.model('Token', tokenSchema);
+module.exports = mongoose.model('Profile', ProfileSchema)
