@@ -34,6 +34,7 @@ router.post('/personal', passport.authenticate('jwt', { session: false }), funct
 	User.findOne({ _id: req.body.user.id }, function (err, profile) {
 		if (profile) {
 			User.updateOne({ _id: req.body.user.id }, req.body.data, function (err, profile) {
+				console.log(err);
 				if (err)
 					return res.status(400).send('Server Error')
 				return res.status(204).send(profile)
