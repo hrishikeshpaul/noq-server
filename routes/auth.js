@@ -36,10 +36,10 @@ router.post('/register', function (req, res) {
 				}
 
 				var transporter = nodemailer.createTransport({
-					service: 'gmail',
+					service: 'SendGrid',
 					auth: {
-						user: 'colen81@gmail.com',
-						pass: 'Cassidy2011rip.'
+						user: 'noqjobportal',
+						pass: 'jobportal12345'
 					}
 				});
 				var mailOptions = {
