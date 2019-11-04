@@ -1,9 +1,10 @@
+
 var mongoose = require('mongoose')
 var passport = require('passport')
 require('../config/passport')(passport)
 var express = require('express')
 var router = express.Router()
-var User = require('../models/User');
+var User = require('../models/user');
 var Education = require('../models/Education')
 var Experience = require('../models/Experience')
 const { check, validationResult } = require('express-validator')
@@ -51,21 +52,28 @@ router.post('/personal', passport.authenticate('jwt', { session: false }), funct
 * Only education
 */
 router.post('/education', passport.authenticate('jwt', { session: false }), function (req, res, err) {
-	console.log(req.body)
+	var arr = []
+	req.body.data.forEach(edu => {
+		arr.push(Object.entries(edu).reduce((a, [k, v]) => (v ? { ...a, [k]: v } : a), {}))
+	})
+
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(400).json({ errors: errors.array() });
 	}
-	req.body.data.forEach(education => {
-		new Education(education).save(function (err, edu) {
-			if (err)
-				console.log('Education can\'t be saved')
-			User.updateOne({ _id: req.body.user.id }, { $addToSet: { education: edu._id } }, function (err, success) {
+
+	if (arr.length > 1) {
+		arr.forEach(education => {
+			new Education(education).save(function (err, edu) {
 				if (err)
-					console.log(err)
+					console.log('Education can\'t be saved')
+				User.updateOne({ _id: req.body.user.id }, { $addToSet: { education: edu._id } }, function (err, success) {
+					if (err)
+						console.log(err)
+				})
 			})
 		})
-	})
+	}
 	return res.status(201).send('Saved')
 })
 
@@ -100,16 +108,20 @@ router.post('/experience', passport.authenticate('jwt', { session: false }), fun
 		return res.status(400).json({ errors: errors.array() });
 	}
 
-	req.body.data.forEach(experience => {
-		new Experience(experience).save(function (err, exp) {
-			if (err)
-				return res.status(400).send('Could not save experience')
-			User.updateOne({ _id: req.body.user.id }, { $addToSet: { experience: exp._id } }, function (err, success) {
+	if (req.body.data.length > 0) {
+		req.body.data.forEach(experience => {
+			new Experience(experience).save(function (err, exp) {
 				if (err)
-					return res.status(400).send('Could not be sent')
+					console.log(err)
+				else {
+					User.updateOne({ _id: req.body.user.id }, { $addToSet: { experience: exp._id } }, function (err, success) {
+						if (err)
+							console.log('err')
+					})
+				}
 			})
 		})
-	})
+	}
 	return res.status(201).send('Saved')
 })
 
