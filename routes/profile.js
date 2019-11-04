@@ -107,10 +107,10 @@ router.post('/experience', passport.authenticate('jwt', { session: false }), fun
 		arr.push(Object.entries(edu).reduce((a, [k, v]) => (v ? { ...a, [k]: v } : a), {}))
 	})
 
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(400).json({ errors: errors.array() });
-	}
+	// const errors = validationResult(req);
+	// if (!errors.isEmpty()) {
+	// 	return res.status(400).json({ errors: errors.array() });
+	// }
 
 	if (arr.length > 0) {
 		arr.forEach(experience => {
