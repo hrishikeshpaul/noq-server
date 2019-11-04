@@ -134,7 +134,7 @@ router.get('/resend/:id', function (req, res, next) {
 			if (err) { return res.status(500).send({ msg: err.message }); }
 
 			// Send the email
-			var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: 'noqjobporta', pass: 'jobportal12345' } });
+			var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: 'noqjobportal', pass: 'jobportal12345' } });
 			var mailOptions = { from: 'no-reply@codemoto.io', to: user.email, subject: 'Account Verification Token', text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/api\/auth\/confirmation\/' + token.token + '.\n' };
 			transporter.sendMail(mailOptions, function (err) {
 				if (err) { return res.status(500).send({ msg: err.message }); }
@@ -172,7 +172,7 @@ router.post('/forgot', function (req, res, next) {
 			var smtpTransport = nodemailer.createTransport({
 				service: 'SendGrid',
 				auth: {
-					user: 'noqjobporta',
+					user: 'noqjobportal',
 					pass: 'jobportal12345'
 				}
 			});
@@ -228,7 +228,7 @@ router.post('/reset/:token', function (req, res) {
 			var smtpTransport = nodemailer.createTransport({
 				service: 'SendGrid',
 				auth: {
-					user: 'noqjobporta',
+					user: 'noqjobportal',
 					pass: 'jobportal12345'
 				}
 			});
