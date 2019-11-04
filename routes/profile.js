@@ -4,7 +4,7 @@ var passport = require('passport')
 require('../config/passport')(passport)
 var express = require('express')
 var router = express.Router()
-var User = require('../models/user');
+var User = require('../models/User');
 var Education = require('../models/Education')
 var Experience = require('../models/Experience')
 const { check, validationResult } = require('express-validator')
