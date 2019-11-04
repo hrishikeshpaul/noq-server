@@ -58,12 +58,12 @@ router.post('/education', passport.authenticate('jwt', { session: false }), func
 		arr.push(Object.entries(edu).reduce((a, [k, v]) => (v ? { ...a, [k]: v } : a), {}))
 	})
 
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(400).json({ errors: errors.array() });
-	}
+	// const errors = validationResult(req);
+	// if (!errors.isEmpty()) {
+	// 	return res.status(400).json({ errors: errors.array() });
+	// }
 
-	if (arr.length > 1) {
+	if (arr.length > 0) {
 		arr.forEach(education => {
 			new Education(education).save(function (err, edu) {
 				if (err)
