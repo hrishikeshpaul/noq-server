@@ -112,7 +112,7 @@ router.get('/confirmation/:id', function (req, res, next) {
 			user.isVerified = true;
 			user.save(function (err) {
 				if (err) { return res.status(500).send({ msg: err.message }); }
-				res.status(200).send("<b>Verified!</b> <br /> Please click <a href='http://localhost:8080/login'>here</a> to login.");
+				res.status(200).send("<b>Verified!</b> <br /> Please click <a href='https://noq-client.herokuapp.com/login'>here</a> to login.");
 			});
 		});
 	});
@@ -138,7 +138,7 @@ router.get('/resend/:id', function (req, res, next) {
 			var mailOptions = { from: 'no-reply@codemoto.io', to: user.email, subject: 'Account Verification Token', text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/api\/auth\/confirmation\/' + token.token + '.\n' };
 			transporter.sendMail(mailOptions, function (err) {
 				if (err) { return res.status(500).send({ msg: err.message }); }
-				res.status(200).send('A verification email has been sent to ' + user.email + '. Please click <a href=\'http://localhost:8080/login\'>here</a> to go back.');
+				res.status(200).send('A verification email has been sent to ' + user.email + '. Please click <a href=\'https://noq-client.herokuapp.com/login\'>here</a> to go back.');
 			});
 		});
 
