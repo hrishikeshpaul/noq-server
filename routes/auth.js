@@ -29,6 +29,7 @@ router.post('/register', function (req, res) {
 
 
 			var token = new Token({ _userId: newUser._id, token: crypto.randomBytes(16).toString('hex') })
+			console.log(token);
 			token.save(function (err) {
 				if (err) {
 					console.log(err)
