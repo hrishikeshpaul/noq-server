@@ -102,14 +102,18 @@ router.delete('/education/:id', passport.authenticate('jwt', { session: false })
 * PUT, DELETE route to come after profile page is made!
 */
 router.post('/experience', passport.authenticate('jwt', { session: false }), function (req, res, err) {
+	var arr = []
+	req.body.data.forEach(edu => {
+		arr.push(Object.entries(edu).reduce((a, [k, v]) => (v ? { ...a, [k]: v } : a), {}))
+	})
 
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(400).json({ errors: errors.array() });
 	}
 
-	if (req.body.data.length > 0) {
-		req.body.data.forEach(experience => {
+	if (arr.length > 0) {
+		arr.forEach(experience => {
 			new Experience(experience).save(function (err, exp) {
 				if (err)
 					console.log(err)
