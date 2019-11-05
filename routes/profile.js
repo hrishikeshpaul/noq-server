@@ -68,7 +68,7 @@ router.post('/education', passport.authenticate('jwt', { session: false }), func
 			new Education(education).save(function (err, edu) {
 				if (err)
 					console.log('Education can\'t be saved')
-				else {
+				if (edu) {
 					User.updateOne({ _id: req.body.user.id }, { $addToSet: { education: edu._id } }, function (err, success) {
 						if (err)
 							console.log(err)
