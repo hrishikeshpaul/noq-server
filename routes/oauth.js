@@ -138,7 +138,7 @@ class LinkedInAPI {
 
 const LINKEDIN_CLIENT_ID = "776wjnff7ois17";
 const LINKEDIN_CLIENT_SECRET = "UwEOv8EeIkUpfiMb";
-const LINKEDIN_CALLBACK_URL = "http://localhost:3000/auth/linkedin/callback";
+const LINKEDIN_CALLBACK_URL = "https://ancient-caverns-78426.herokuapp.com/auth/linkedin/callback";
 const linkedInAPI = new LinkedInAPI(LINKEDIN_CLIENT_ID, LINKEDIN_CLIENT_SECRET, LINKEDIN_CALLBACK_URL);
 
 // Construct url and redirect to the auth dialog
