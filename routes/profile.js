@@ -67,7 +67,7 @@ router.post('/education', passport.authenticate('jwt', { session: false }), func
 		arr.forEach(education => {
 			new Education(education).save(function (err, edu) {
 				if (err)
-					console.log('Education can\'t be saved')
+					console.log('Education can\'t be saved because it is empty')
 				User.updateOne({ _id: req.body.user.id }, { $addToSet: { education: edu._id } }, function (err, success) {
 					if (err)
 						console.log(err)
