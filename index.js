@@ -35,6 +35,3 @@ app.use('/auth/linkedin', oauth)
 app.use('/api/user', user);
 app.use('/api/profile', profile);
 app.use('/api/jobs', passport.authenticate('jwt', { session: false }), job);
-var url = require('./config/server_config');
-console.log(url);
-console.log(url.dev.client);
