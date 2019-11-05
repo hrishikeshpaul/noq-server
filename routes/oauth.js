@@ -2,7 +2,7 @@ var express = require('express')
 var router = express.Router();
 const request = require('request');
 var User = require('../models/User')
-
+var url = require('../config/server_config');
 class LinkedInAPI {
 
 	/**
@@ -138,7 +138,7 @@ class LinkedInAPI {
 
 const LINKEDIN_CLIENT_ID = "776wjnff7ois17";
 const LINKEDIN_CLIENT_SECRET = "UwEOv8EeIkUpfiMb";
-const LINKEDIN_CALLBACK_URL = "http://localhost:3000/auth/linkedin/callback";
+const LINKEDIN_CALLBACK_URL = `${url.dev.server}/auth/linkedin/callback`;
 const linkedInAPI = new LinkedInAPI(LINKEDIN_CLIENT_ID, LINKEDIN_CLIENT_SECRET, LINKEDIN_CALLBACK_URL);
 
 // Construct url and redirect to the auth dialog
@@ -174,13 +174,13 @@ router.get("/callback", async (req, res) => {
 									}).save(function (err, user) {
 										if (err)
 											return res.status(401)
-										return res.redirect(`https://noq-client.herokuapp.com/oauth/${user.email}/${req.query.code}`)
+										return res.redirect(`${url.dev.client}/${user.email}/${req.query.code}`)
 									})
 								} else {
 									User.updateOne({ email: response[0]["elements"][0]["handle~"]["emailAddress"] }, { $set: { oauthToken: req.query.code } }, function (err, succ) {
 										if (err)
 											return res.status(401)
-										return res.redirect(`https://noq-client.herokuapp.com/oauth/${user.email}/${req.query.code}`)
+										return res.redirect(`${url.dev.client}/${user.email}/${req.query.code}`)
 									})
 								}
 							}
