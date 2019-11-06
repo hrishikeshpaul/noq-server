@@ -41,9 +41,9 @@ router.post('/register', function (req, res) {
 				}
 
 				var transporter = nodemailer.createTransport({
-					service: 'SendGrid',
+					service: 'Sendgrid',
 					auth: {
-						user: 'noqjobportal',
+						user: 'noqjobportal1',
 						pass: 'jobportal12345'
 					}
 				});
@@ -132,14 +132,14 @@ router.get('/resend/:id', function (req, res, next) {
 		if (user.isVerified) return res.status(400).send({ msg: 'This account has already been verified. Please log in.' });
 
 		// Create a verification token, save it, and send email
-		var token = new Token({ _userId: user._id, token: crypto.randomBytes(16).toString('hex') });
+		var token = new Token({ _userId: user._id, token: crypto.randomBytes(16).toString('hex') }); ``
 
 		// Save the token
 		token.save(function (err) {
 			if (err) { return res.status(500).send({ msg: err.message }); }
 
 			// Send the email
-			var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: 'noqjobportal', pass: 'jobportal12345' } });
+			var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: 'noqjobportal1', pass: 'jobportal12345' } });
 			var mailOptions = { from: 'no-reply@codemoto.io', to: user.email, subject: 'Account Verification Token', text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/api\/auth\/confirmation\/' + token.token + '.\n' };
 			transporter.sendMail(mailOptions, function (err) {
 				if (err) { return res.status(500).send({ msg: err.message }); }
@@ -177,7 +177,7 @@ router.post('/forgot', function (req, res, next) {
 			var smtpTransport = nodemailer.createTransport({
 				service: 'Sendgrid',
 				auth: {
-					user: 'noqjobportal',
+					user: 'noqjobportal1',
 					pass: 'jobportal12345'
 				}
 			});
@@ -233,7 +233,7 @@ router.post('/reset/:token', function (req, res) {
 			var smtpTransport = nodemailer.createTransport({
 				service: 'Sendgrid',
 				auth: {
-					user: 'noqjobportal',
+					user: 'noqjobportal1',
 					pass: 'jobportal12345'
 				}
 			});
