@@ -22,7 +22,8 @@ router.post('/register', function (req, res) {
 		var newUser = new User({
 			email: req.body.username,
 			password: req.body.password,
-			role: req.body.role
+			role: req.body.role,
+			gender: req.body.gender
 		})
 		// save the user
 		newUser.save(function (err) {
