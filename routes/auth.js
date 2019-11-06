@@ -9,7 +9,7 @@ var router = express.Router()
 var User = require('../models/User')
 
 var prodURL = require('../config/server_config').prod
-var devURL = require('../config/server_config').dev
+var devURL = require('../config/server_config').dev;
 
 var crypto = require('crypto')
 var nodemailer = require('nodemailer')
