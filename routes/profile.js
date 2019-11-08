@@ -25,6 +25,7 @@ router.post('/updateRole', passport.authenticate('jwt', { session: false }), fun
 router.post('/personal', passport.authenticate('jwt', { session: false }), function (req, res, next) {
 
 	// removing keys that don't have a value to prevent false updates
+	// removing keys that don't have a value to prevent false updates
 	req.body.data = Object.entries(req.body.data).reduce((a, [k, v]) => (v ? { ...a, [k]: v } : a), {})
 	// if object is empty then return an error
 	if (Object.entries(req.body.data).length === 0 && req.body.data.constructor === Object) {
@@ -67,17 +68,18 @@ router.post('/education', passport.authenticate('jwt', { session: false }), func
 		arr.forEach(education => {
 			new Education(education).save(function (err, edu) {
 				if (err)
-					console.log('Education can\'t be saved because it is empty')
-				User.updateOne({ _id: req.body.user.id }, { $addToSet: { education: edu._id } }, function (err, success) {
-					if (err)
-						console.log(err)
-				})
+					console.log('Education can\'t be saved')
+				if (edu) {
+					User.updateOne({ _id: req.body.user.id }, { $addToSet: { education: edu._id } }, function (err, success) {
+						if (err)
+							console.log(err)
+					})
+				}
 			})
 		})
 	}
 	return res.status(201).send('Saved')
 })
-
 router.patch('/education/:id', passport.authenticate('jwt', { session: false }), function (req, res, next) {
 	Education.findOneAndUpdate({ _id: req.params.id }, { $set: req.body }, function (err, succ) {
 		if (err)
