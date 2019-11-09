@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var engine = require('consolidate');
 var passport = require('passport')
 var cors = require('cors')
-
+var logger = require('morgan');
 var auth = require('./routes/auth');
 
 var job = require('./routes/job')
@@ -24,6 +24,7 @@ app
 	.get('/', (req, res) => res.render('pages/index'))
 	.listen(PORT, () => console.log(`Listening on ${PORT}`))
 app.use(cors())
+app.use(logger('dev'));
 app.use('/home', home);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ 'extended': 'false' }));
