@@ -18,8 +18,10 @@ module.exports = function (passport) {
 				return done(err, false);
 			}
 			if (user) {
+				console.log('user found');
 				done(null, user);
 			} else {
+				console.log('user not found');
 				done(null, false);
 			}
 		});

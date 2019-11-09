@@ -15,6 +15,7 @@ var profile = require('./routes/profile');
 var user = require('./routes/user');
 var oauth = require('./routes/oauth');
 var home = require('./routes/test');
+var imageupload = require('./routes/imageUpload');
 const connectDB = require('./config/db');
 connectDB();
 app
@@ -36,3 +37,4 @@ app.use('/auth/linkedin', oauth)
 app.use('/api/user', user);
 app.use('/api/profile', profile);
 app.use('/api/jobs', passport.authenticate('jwt', { session: false }), job);
+app.use('/api/image/', imageupload);
