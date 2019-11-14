@@ -79,6 +79,11 @@ io.on('connection', function (socket) {
 			}
 	})
 
+	socket.on('typing', function (obj) {
+		if (connectedUsers.hasOwnProperty(obj.to))
+			connectedUsers[obj.to].emit('TYPING', {from: obj.from, status: obj.status})
+	})
+
 	socket.on('PVT_READ', function (conversation) {
 		console.log(conversation.users)
 		Message.updateMany({conversation_id: conversation._id, read: false}, {$set: {read: true}}, {multi: true})

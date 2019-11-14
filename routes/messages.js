@@ -17,7 +17,6 @@ const { check, validationResult } = require('express-validator')
 router.post('/', function(req, res) {
 	var nameOfConversation = makeConversationName(req.body.from, req.body.to)
 	req.body.to.push(req.body.from)
-	// console.log('all: ', allUsers)
 
 	Conversation.findOne({name: nameOfConversation}, function(err, doc){
 		if (err) console.log(err)
