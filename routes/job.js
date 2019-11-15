@@ -18,7 +18,7 @@ router.get('/', function (req, res, next) {
 				user.passed_jobs.forEach(job => {
 					jobsToFilter.push(job._id.toString())
 				})
-				Job.find({}).lean().exec(function (err, jobs) {
+				Job.find({}).populate('employer').lean().exec(function (err, jobs) {
 					if (err)
 						return res.status(400).send('Error')
 					var allJobs = jobs
