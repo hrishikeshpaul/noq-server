@@ -20,7 +20,10 @@ var UserSchema = new Schema({
 	oauthToken: {
 		type: String
 	},
-
+	profilepicture: {
+		type: String,
+		default: null
+	},
 	password: {
 		type: String,
 	},

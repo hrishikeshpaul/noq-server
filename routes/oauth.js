@@ -2,8 +2,10 @@ var express = require('express')
 var router = express.Router();
 const request = require('request');
 var User = require('../models/User')
+var url = require('../config/server_config');
 var prodURL = require('../config/server_config').prod;
 var devURL = require = require('../config/server_config').dev;
+
 class LinkedInAPI {
 
 	/**

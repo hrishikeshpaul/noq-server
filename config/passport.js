@@ -2,6 +2,7 @@ var JwtStrategy = require('passport-jwt').Strategy,
 	ExtractJwt = require('passport-jwt').ExtractJwt;
 var LinkedInStrategy = require('@sokratis/passport-linkedin-oauth2').Strategy;
 var GitHubStrategy = require('passport-github').Strategy;
+var url = require('../config/server_config')
 var prodURL = require('../config/server_config').prod;
 var devURL = require('../config/server_config').dev;
 
@@ -19,8 +20,10 @@ module.exports = function (passport) {
 				return done(err, false);
 			}
 			if (user) {
+				console.log('user found');
 				done(null, user);
 			} else {
+				console.log('user not found');
 				done(null, false);
 			}
 		});
@@ -29,7 +32,8 @@ module.exports = function (passport) {
 	passport.use(new LinkedInStrategy({
 		clientID: '81w3oym1a80wt1',
 		clientSecret: 'diLAWPATcniVV3V0',
-		callbackURL: `${devURL.server}/api/auth/linkedin/callback`,
+
+		callbackURL: `${url.dev.server}/api/auth/linkedin/callback`,
 		profileFields: ['id', 'email-address'],
 	}, function (accessToken, refreshToken, profile, done) {
 		// asynchronous verification, for effect...
