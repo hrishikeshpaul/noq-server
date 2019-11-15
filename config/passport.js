@@ -3,6 +3,8 @@ var JwtStrategy = require('passport-jwt').Strategy,
 var LinkedInStrategy = require('@sokratis/passport-linkedin-oauth2').Strategy;
 var GitHubStrategy = require('passport-github').Strategy;
 var url = require('../config/server_config')
+var prodURL = require('../config/server_config').prod;
+var devURL = require('../config/server_config').dev;
 
 // load up the user model
 var User = require('../models/User');
@@ -30,6 +32,7 @@ module.exports = function (passport) {
 	passport.use(new LinkedInStrategy({
 		clientID: '81w3oym1a80wt1',
 		clientSecret: 'diLAWPATcniVV3V0',
+
 		callbackURL: `${url.dev.server}/api/auth/linkedin/callback`,
 		profileFields: ['id', 'email-address'],
 	}, function (accessToken, refreshToken, profile, done) {
@@ -43,7 +46,7 @@ module.exports = function (passport) {
 	passport.use(new GitHubStrategy({
 		clientID: 'Iv1.56db9f8a973882db',
 		clientSecret: 'ca00ed7b71b8dfcdb98097e27645b3a004003439',
-		callbackURL: `${url.dev.server}/api/auth/github/callback`
+		callbackURL: `${devURL.server}/api/auth/github/callback`
 	},
 		function (accessToken, refreshToken, profile, cb) {
 			console.log(JSON.stringify())

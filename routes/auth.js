@@ -9,7 +9,7 @@ var router = express.Router()
 var User = require('../models/User')
 
 var prodURL = require('../config/server_config').prod
-var devURL = require('../config/server_config').dev
+var devURL = require('../config/server_config').dev;
 
 var crypto = require('crypto')
 var nodemailer = require('nodemailer')
@@ -22,7 +22,8 @@ router.post('/register', function (req, res) {
 		var newUser = new User({
 			email: req.body.username,
 			password: req.body.password,
-			role: req.body.role
+			role: req.body.role,
+			gender: req.body.gender
 		})
 		// save the user
 		newUser.save(function (err) {
@@ -40,9 +41,9 @@ router.post('/register', function (req, res) {
 				}
 
 				var transporter = nodemailer.createTransport({
-					service: 'SendGrid',
+					service: 'Sendgrid',
 					auth: {
-						user: 'noqjobportal',
+						user: 'noqjobportal123',
 						pass: 'jobportal12345'
 					}
 				});
@@ -77,7 +78,7 @@ router.post('/login', function (req, res) {
 			res.status(401).send({ success: false, msg: 'User not verified.', link: true })
 		} else if (user.isVerified && user.oauth) {
 			if (user.oauthToken === req.body.token) {
-				var token = jwt.sign(user.toJSON(), settings.secret)
+				var token = jwt.sign(user.toJSON(), settings.secret);
 				res.json({ success: true, token: 'JWT ' + token, user: user })
 			} else {
 				res.status(401).send({ success: false, msg: 'Unauthorized User.' })
@@ -131,14 +132,14 @@ router.get('/resend/:id', function (req, res, next) {
 		if (user.isVerified) return res.status(400).send({ msg: 'This account has already been verified. Please log in.' });
 
 		// Create a verification token, save it, and send email
-		var token = new Token({ _userId: user._id, token: crypto.randomBytes(16).toString('hex') });
+		var token = new Token({ _userId: user._id, token: crypto.randomBytes(16).toString('hex') }); ``
 
 		// Save the token
 		token.save(function (err) {
 			if (err) { return res.status(500).send({ msg: err.message }); }
 
 			// Send the email
-			var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: 'noqjobportal', pass: 'jobportal12345' } });
+			var transporter = nodemailer.createTransport({ service: 'Sendgrid', auth: { user: 'noqjobportal123', pass: 'jobportal12345' } });
 			var mailOptions = { from: 'no-reply@codemoto.io', to: user.email, subject: 'Account Verification Token', text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/api\/auth\/confirmation\/' + token.token + '.\n' };
 			transporter.sendMail(mailOptions, function (err) {
 				if (err) { return res.status(500).send({ msg: err.message }); }
@@ -176,7 +177,7 @@ router.post('/forgot', function (req, res, next) {
 			var smtpTransport = nodemailer.createTransport({
 				service: 'Sendgrid',
 				auth: {
-					user: 'noqjobportal',
+					user: 'noqjobportal123',
 					pass: 'jobportal12345'
 				}
 			});
@@ -232,7 +233,7 @@ router.post('/reset/:token', function (req, res) {
 			var smtpTransport = nodemailer.createTransport({
 				service: 'Sendgrid',
 				auth: {
-					user: 'noqjobportal',
+					user: 'noqjobportal123',
 					pass: 'jobportal12345'
 				}
 			});

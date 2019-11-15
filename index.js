@@ -35,7 +35,7 @@ const server = 	app.listen(PORT, () => console.log(`Listening on ${PORT}`))
 app.use(cors())
 app.use(logger('dev'));
 app.use('/home', home);
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '15mb'}));
 app.use(bodyParser.urlencoded({ 'extended': 'false' }));
 app.use(passport.initialize());
 app.use(passport.session());
