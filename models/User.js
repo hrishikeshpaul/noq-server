@@ -13,9 +13,14 @@ var UserSchema = new Schema({
 		type: Boolean,
 		default: false
 	},
+	profilepicture: {
+		type: String,
+		default: null
+	},
 	oauthToken: {
 		type: String
 	},
+
 	password: {
 		type: String,
 	},

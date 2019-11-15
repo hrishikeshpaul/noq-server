@@ -8,7 +8,7 @@ var User = require('../models/User');
 var Education = require('../models/Education')
 var Experience = require('../models/Experience')
 const { check, validationResult } = require('express-validator')
-
+var imgur = require('imgur');
 
 router.post('/updateRole', passport.authenticate('jwt', { session: false }), function (req, res, next) {
 	console.log(req.body)
@@ -176,4 +176,30 @@ router.post('/skills', passport.authenticate('jwt', { session: false }), functio
 	}
 })
 
+/*
+* Only Profile picture
+* Post Route to upload a profile picture
+*/
+// A single image
+router.post('/picture', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+
+	imgur.setClientId('77457873b7895a0');
+	imgur.setAPIUrl('https://api.imgur.com/3/');
+
+	imgur.uploadBase64(req.body.image)
+		.then(function (json) {
+			User.findOneAndUpdate({ _id: req.body.user_id }, {$set: {profilepicture: json.data.link}}, function (err, user) {
+				if (err) {
+					console.log
+					return res.status(400).send('Error')
+				}
+				else {
+					return res.status(204)
+				}
+			})
+		})
+		.catch(function (err) {
+			console.error(err.message);
+	});
+})
 module.exports = router
