@@ -54,20 +54,21 @@ const io = require('socket.io')(server);
 io.on('connection', function (socket) {
 	// console.log(socket.id)
 
-	// socket.on('disconnect', function (username) {
-	// 	console.log('hreee')
-	// 	if (connectedUsers[username]) {
-	// 		connectedUsers[username].disconnect()
-	// 		console.log('user disconnected')
-	// 	}
-		
-	// })
-
 	socket.on('register', function(username){
 		if(!connectedUsers[username]) {
 			connectedUsers[username] = socket;
 			for (var i in connectedUsers) {
 				connectedUsers[i].emit('ONLINE_USERS', Object.keys(connectedUsers))
+			}
+		}
+	})
+
+	socket.on('USER_OUT', function (username) {
+		if (connectedUsers.hasOwnProperty(username)) {
+			connectedUsers[username].disconnect()
+			delete connectedUsers[username]; 
+			for (var i in connectedUsers) {
+				connectedUsers[i].emit('OFFLINE_USER', username)
 			}
 		}
 	})
@@ -85,7 +86,6 @@ io.on('connection', function (socket) {
 	})
 
 	socket.on('PVT_READ', function (conversation) {
-		console.log(conversation.users)
 		Message.updateMany({conversation_id: conversation._id, read: false}, {$set: {read: true}}, {multi: true})
 		.exec(function (err, done) {
 			if (err) console.log(err)
@@ -104,14 +104,10 @@ io.on('connection', function (socket) {
 	socket.on('SEND_MESSAGE', function(data) {
 		var nameOfConversation = makeConversationName(data.from, data.to)
 		data.to.push(data.from)
-		for (var i in connectedUsers) {
-			console.log('users: ', i)
-		}
 		Conversation.findOne({name: nameOfConversation}, function(err, doc){
 			if (err) console.log(err)
 				if (!doc) {
 	    	// new conversation
-	    	console.log('new doc happened')
 	    	new Conversation({
 	    		name: nameOfConversation,
 	    		users: data.to,
@@ -145,7 +141,6 @@ io.on('connection', function (socket) {
 	    		})
 	    } else {
 	    	// old covnersation but sending new message from profile page
-	    	console.log('old doc retrieved')
 	    	new Message({
 	    		from: data.from,
 	    		to: data.to[0],
@@ -153,7 +148,6 @@ io.on('connection', function (socket) {
 	    		body: data.body
 	    	}).save(function (err, msg) {
 	    		if (err) console.log(err)
-	    			console.log('here: ', data.from)
 	    			Conversation.findOneAndUpdate({_id: msg.conversation_id}, {$push: {messages: msg._id}, $set: {lastUpdatedBy: msg.from.toString()}, $set: {lastUpdatedAt: new Date()}}, function (err, done) {
 	    				if (err) console.log(err)
 	    					else {
