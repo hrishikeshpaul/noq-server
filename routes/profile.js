@@ -188,12 +188,13 @@ router.post('/picture', passport.authenticate('jwt', { session: false }), functi
 
 	imgur.uploadBase64(req.body.image)
 		.then(function (json) {
-			User.findOneAndUpdate({ _id: req.body.user_id }, {$set: {profilepicture: json.data.link}}, function (err, user) {
+			User.findOneAndUpdate({ _id: req.body.user_id }, {$set: {profilepicture: `${json.data.link}`}}, function (err, user) {
 				if (err) {
-					console.log
+					console.log(err)
 					return res.status(400).send('Error')
 				}
 				else {
+					console.log(json.data.link)
 					return res.status(204)
 				}
 			})
