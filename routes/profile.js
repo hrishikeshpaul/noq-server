@@ -8,7 +8,7 @@ var User = require('../models/User');
 var Education = require('../models/Education')
 var Experience = require('../models/Experience')
 const { check, validationResult } = require('express-validator')
-
+var Honor = require('../models/Honors');
 
 router.post('/updateRole', passport.authenticate('jwt', { session: false }), function (req, res, next) {
 	console.log(req.body)
@@ -174,6 +174,58 @@ router.post('/skills', passport.authenticate('jwt', { session: false }), functio
 	} else {
 		return res.status(200).send('Nothing added')
 	}
+})
+
+/*
+* Only education
+*/
+router.post('/honor', passport.authenticate('jwt', { session: false }), function (req, res, err) {
+	var arr = []
+	req.body.data.forEach(honor => {
+		arr.push(Object.entries(honor).reduce((a, [k, v]) => (v ? { ...a, [k]: v } : a), {}))
+	})
+
+	// const errors = validationResult(req);
+	// if (!errors.isEmpty()) {
+	// 	return res.status(400).json({ errors: errors.array() });
+	// }
+
+	if (arr.length > 0) {
+		arr.forEach(honor => {
+			new Honor(honor).save(function (err, hn) {
+				if (err)
+					console.log('Honor can\'t be saved')
+				if (hn) {
+					User.updateOne({ _id: req.body.user.id }, { $addToSet: { honor: hn._id } }, function (err, success) {
+						if (err)
+							console.log(err)
+					})
+				}
+			})
+		})
+	}
+	return res.status(201).send('Saved')
+})
+
+
+router.patch('/honor/:id', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+	Honor.findOneAndUpdate({ _id: req.params.id }, { $set: req.body }, function (err, succ) {
+		if (err)
+			return res.status(400).send('Error')
+		else return res.status(200).send('Done')
+	})
+})
+
+/**
+ * Does not cascade DELETE
+**/
+
+router.delete('/honor/:id', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+	Honor.remove({ _id: req.params.id }, function (err, succ) {
+		if (err)
+			return res.status(400).send('Error')
+		else return res.status(200).send('Done')
+	})
 })
 
 module.exports = router
