@@ -29,7 +29,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ 'extended': 'false' }));
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use(logger('dev'));
 app.use('/api/auth', auth);
 app.use('/auth/linkedin', oauth)
 app.use('/api/user', user);

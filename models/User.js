@@ -62,6 +62,8 @@ var UserSchema = new Schema({
 	},
 	experience: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Experience' }],
 	education: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Education' }],
+	honor: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Honor' }],
+	certification: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Certification' }],
 	social: {
 		linkedin: {
 			type: String,
