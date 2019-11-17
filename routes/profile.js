@@ -270,13 +270,13 @@ router.post('/certification', passport.authenticate('jwt', { session: false }), 
 
 	if (arr.length > 0) {
 		arr.forEach(certificate => {
-			console.log(req.body.user.id);
+			//console.log(req.body.user.id);
 			new Certification(certificate).save(function (err, cert) {
 				if (err)
 					console.log(err)
 				if (cert) {
 
-					User.findOneAndUpdate({ _id: req.body.user.id }, { $addToSet: { certification: cert._id } }, function (err, success) {
+					User.updateOne({ _id: req.body.user.id }, { $addToSet: { certification: cert._id } }, function (err, success) {
 						if (err)
 							console.log(err)
 						if (success)
