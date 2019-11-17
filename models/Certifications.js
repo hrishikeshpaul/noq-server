@@ -2,7 +2,7 @@ var mongoose = require('mongoose')
 var Schema = mongoose.Schema
 
 const certificationSchema = new Schema({
-	name: {
+	title: {
 		type: String,
 		required: true
 	},
