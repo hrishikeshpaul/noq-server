@@ -7,6 +7,8 @@ var router = express.Router()
 var User = require('../models/User');
 var Education = require('../models/Education')
 var Experience = require('../models/Experience')
+var Certification = require('../models/Certifications')
+var Honor = require('../models/Honors');
 const { check, validationResult } = require('express-validator')
 var imgur = require('imgur');
 
@@ -188,7 +190,7 @@ router.post('/picture', passport.authenticate('jwt', { session: false }), functi
 
 	imgur.uploadBase64(req.body.image)
 		.then(function (json) {
-			User.findOneAndUpdate({ _id: req.body.user_id }, {$set: {profilepicture: json.data.link}}, function (err, user) {
+			User.findOneAndUpdate({ _id: req.body.user_id }, { $set: { profilepicture: json.data.link } }, function (err, user) {
 				if (err) {
 					console.log
 					return res.status(400).send('Error')
@@ -200,6 +202,111 @@ router.post('/picture', passport.authenticate('jwt', { session: false }), functi
 		})
 		.catch(function (err) {
 			console.error(err.message);
-	});
+		});
+})
+/*
+* Only honor
+*/
+router.post('/honor', passport.authenticate('jwt', { session: false }), function (req, res, err) {
+	var arr = []
+	req.body.data.forEach(honor => {
+		arr.push(Object.entries(honor).reduce((a, [k, v]) => (v ? { ...a, [k]: v } : a), {}))
+	})
+	console.log('in here');
+	// const errors = validationResult(req);
+	// if (!errors.isEmpty()) {
+	// 	return res.status(400).json({ errors: errors.array() });
+	// }
+
+	if (arr.length > 0) {
+		arr.forEach(honor => {
+			new Honor(honor).save(function (err, hn) {
+				if (err)
+					console.log('Honor can\'t be saved')
+				if (hn) {
+					console.log('honooooooooooooooooor', hn);
+					User.updateOne({ _id: req.body.user.id }, { $addToSet: { honor: hn._id } }, function (err, success) {
+						if (err)
+							console.log(err)
+					})
+				}
+			})
+		})
+	}
+	return res.status(201).send('Saved')
+})
+
+
+router.patch('/honor/:id', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+	Honor.findOneAndUpdate({ _id: req.params.id }, { $set: req.body }, function (err, succ) {
+		if (err)
+			return res.status(400).send('Error')
+		else return res.status(200).send('Done')
+	})
+})
+
+/**
+ * Does not cascade DELETE
+**/
+
+router.delete('/honor/:id', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+	Honor.deleteOne({ _id: req.params.id }, function (err, succ) {
+		if (err)
+			return res.status(400).send('Error')
+		else return res.status(200).send('Done')
+	})
+})
+
+
+
+/*
+* Only Certification
+*/
+router.post('/certification', passport.authenticate('jwt', { session: false }), function (req, res, err) {
+	var arr = []
+	req.body.data.forEach(certificate => {
+		arr.push(Object.entries(certificate).reduce((a, [k, v]) => (v ? { ...a, [k]: v } : a), {}))
+	})
+
+	if (arr.length > 0) {
+		arr.forEach(certificate => {
+			console.log(req.body.user.id);
+			new Certification(certificate).save(function (err, cert) {
+				if (err)
+					console.log(err)
+				if (cert) {
+
+					User.findOneAndUpdate({ _id: req.body.user.id }, { $addToSet: { certification: cert._id } }, function (err, success) {
+						if (err)
+							console.log(err)
+						if (success)
+							console.log(success);
+					})
+				}
+			})
+		})
+	}
+	return res.status(201).send('Saved')
+})
+
+
+router.patch('/certification/:id', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+	Certification.findOneAndUpdate({ _id: req.params.id }, { $set: req.body }, function (err, succ) {
+		if (err)
+			return res.status(400).send('Error')
+		else return res.status(200).send('Done')
+	})
+})
+
+/**
+ * Does not cascade DELETE
+**/
+
+router.delete('/certification/:id', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+	Certification.deleteOne({ _id: req.params.id }, function (err, succ) {
+		if (err)
+			return res.status(400).send('Error')
+		else return res.status(200).send('Done')
+	})
 })
 module.exports = router
