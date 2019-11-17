@@ -27,6 +27,14 @@ var UserSchema = new Schema({
 	password: {
 		type: String,
 	},
+	security:{
+		type: String,
+		required: true
+	},
+	security_answer:{
+		type: String,
+		required: true
+	},
 	isVerified: {
 		type: Boolean,
 		default: false
