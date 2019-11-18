@@ -10,6 +10,8 @@ router.get('/:id', function (req, res, next) {
 	User.findOne({ _id: req.params.id })
 		.populate('education')
 		.populate('experience')
+		.populate('honor')
+		.populate('certification')
 		.exec(function (err, success) {
 			if (err) {
 				return res.status(400).send('Error')
