@@ -52,7 +52,7 @@ app.use('/api/messages', messages)
 var connectedUsers = {}
 const io = require('socket.io')(server);
 io.on('connection', function (socket) {
-	// //console.log('socketid: ', socket.id)
+	// // //console.log('socketid: ', socket.id)
 
 	socket.on('register', function(username){
 		console.log('users: ', connectedUsers)
