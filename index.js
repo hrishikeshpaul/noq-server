@@ -53,7 +53,7 @@ var connectedUsers = {}
 const io = require('socket.io')(server);
 io.set('origins', '*:*');
 io.on('connection', function (socket) {
-	// console.log(socket.id)
+	console.log('socketid: ', socket.id)
 
 	socket.on('register', function(username){
 		console.log('users: ', connectedUsers)
