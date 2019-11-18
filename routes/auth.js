@@ -165,14 +165,19 @@ router.post('/forgot', function (req, res, next) {
 			User.findOne({ email: req.body.email }, function (err, user) {
 				if (!user) {
 					return res.status(409).send({ msg: 'No account with that email address exists.' });
+				}else{
+					if (user.security!=req.body.security)
+						return res.status(409).send({ msg: 'Wrong security question.' });
+					else if (user.security_answer!=req.body.security_answer)
+						return res.status(409).send({ msg: 'Wrong security question answer.' });
+					else {
+						user.resetPasswordToken = token;
+						user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+						user.save(function (err) {
+							done(err, token, user);
+						});
+					}
 				}
-
-				user.resetPasswordToken = token;
-				user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-
-				user.save(function (err) {
-					done(err, token, user);
-				});
 			});
 		},
 		function (token, user, done) {
