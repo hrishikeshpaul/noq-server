@@ -55,8 +55,10 @@ io.on('connection', function (socket) {
 	// console.log(socket.id)
 
 	socket.on('register', function(username){
-		if(!connectedUsers[username]) {
+		console.log('users: ', connectedUsers)
+		if(!connectedUsers.hasOwnProperty(username)) {
 			connectedUsers[username] = socket;
+			console.log('users: ', connectedUsers)
 			for (var i in connectedUsers) {
 				connectedUsers[i].emit('ONLINE_USERS', Object.keys(connectedUsers))
 			}
