@@ -12,8 +12,8 @@ router.get('/', function (req, res, next) {
 	if (req.query.role === 'student') {
 		var jobsToFilter = []
 		User.findOne({ _id: req.query.user })
-			.populate('passed_jobs')
-			.exec(function (err, user) {
+		.populate('passed_jobs')
+		.exec(function (err, user) {
 				// passed jobs shouldn't appear. so getting all the IDs of the jobs that user has passed
 				user.passed_jobs.forEach(job => {
 					jobsToFilter.push(job._id.toString())
@@ -55,40 +55,40 @@ router.get('/', function (req, res, next) {
 		var passedApplicants = []
 
 		Job.find({ employer: req.query.user })
-			.populate('applicants')
-			.exec(function (err, jobs) {
-				if (err)
-					console.log(err)
-				jobs.forEach(job => {
-					job.applicants.forEach(applicant => {
-						applicants.push({
-							applicant: applicant._id.toString(),
-							job: job._id.toString()
-						})
+		.populate('applicants')
+		.exec(function (err, jobs) {
+			if (err)
+				console.log(err)
+			jobs.forEach(job => {
+				job.applicants.forEach(applicant => {
+					applicants.push({
+						applicant: applicant._id.toString(),
+						job: job._id.toString()
 					})
 				})
-				User.find({ role: 'student' })
-					.populate('experience')
-					.populate('education')
-					.exec(function (err, users) {
-						if (err)
-							console.log(err)
-						var ctr = 0
-						var usersToReturn = []
-						users.forEach(user => {
-							ctr += 1
-							applicants.forEach(applicant => {
-								if (user._id.toString() === applicant.applicant) {
-									user._doc['job'] = applicant.job
-									usersToReturn.push(user)
-								}
-							})
-							if (ctr == users.length) {
-								return res.status(200).send(usersToReturn)
-							}
-						})
-					})
 			})
+			User.find({ role: 'student' })
+			.populate('experience')
+			.populate('education')
+			.exec(function (err, users) {
+				if (err)
+					console.log(err)
+				var ctr = 0
+				var usersToReturn = []
+				users.forEach(user => {
+					ctr += 1
+					applicants.forEach(applicant => {
+						if (user._id.toString() === applicant.applicant) {
+							user._doc['job'] = applicant.job
+							usersToReturn.push(user)
+						}
+					})
+					if (ctr == users.length) {
+						return res.status(200).send(usersToReturn)
+					}
+				})
+			})
+		})
 	}
 })
 
@@ -128,10 +128,23 @@ router.patch('/reject', function (req, res, next) {
 
 router.patch('/accept', function (req, res, next) {
 	if (req.body.role === 'student') {
-		Job.updateOne({ _id: req.body.job }, { $addToSet: { applicants: mongoose.Types.ObjectId(req.body.user) } }, function (err, success) {
+		var UpdateDict = {}
+		
+		Job.updateOne({ _id: req.body.job._id }, { $addToSet: { applicants: mongoose.Types.ObjectId(req.body.user) } }, function (err, success) {
 			if (err)
 				return res.status(400).send('Error')
-			return res.status(204).send('Updated')
+			else {
+				var counter = 0
+				req.body.job.skills.forEach(skill => {
+					counter ++
+					User.findOneAndUpdate({_id: req.body.user, 'skills.name': skill.name}, {$inc: {[`skills.$.points`]: 1}}, function (err, donne) {
+						if (err) console.log(err)
+							console.log('done')
+					})
+				})
+			}
+			if (counter === req.body.job.skills.length)
+				return res.status(204).send('Updated')
 		})
 	} else if (req.body.role === 'employer') {
 		Job.findOneAndUpdate({ _id: req.body.job }, { $pullAll: { applicants: [req.body.userToAccept] }, $addToSet: { confirmed_users: req.body.userToAccept } }, function (err, job) {
@@ -156,6 +169,17 @@ router.patch('/rejectconfirmedapplicant', function (req, res, next) {
 			console.log(err)
 		else
 			return res.status(200).send('Updated')
+	})
+})
+
+router.get('/recommendation/:id', function (req, res, next) {
+	User.findOne({_id: req.params.id})
+	.exec(function (err, user) {
+		if (err) console.log(err)
+		else {
+			user.skills.sort((a, b) => parseFloat(b.points) - parseFloat(a.points));
+			res.status(200).send(user.skills[0])
+		}
 	})
 })
 
