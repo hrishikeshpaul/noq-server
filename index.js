@@ -24,6 +24,7 @@ var oauth = require('./routes/oauth');
 var home = require('./routes/test');
 var imageupload = require('./routes/imageUpload');
 var messages = require('./routes/messages')
+var settings = require('./routes/settings')
 
 const connectDB = require('./config/db');
 connectDB();
@@ -47,6 +48,7 @@ app.use('/api/profile', profile);
 app.use('/api/jobs', passport.authenticate('jwt', { session: false }), job);
 app.use('/api/image/', imageupload);
 app.use('/api/messages', messages)
+app.use('/api/settings', settings)
 
 
 var connectedUsers = {}
@@ -54,9 +56,9 @@ const io = require('socket.io')(server);
 io.on('connection', function (socket) {
 	// // //console.log('socketid: ', socket.id)
 
-	socket.on('register', function(username){
+	socket.on('register', function (username) {
 		console.log('users: ', connectedUsers)
-		if(!connectedUsers.hasOwnProperty(username)) {
+		if (!connectedUsers.hasOwnProperty(username)) {
 			connectedUsers[username] = socket;
 			console.log('users: ', connectedUsers)
 			for (var i in connectedUsers) {
