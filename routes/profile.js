@@ -13,7 +13,7 @@ const { check, validationResult } = require('express-validator')
 var imgur = require('imgur');
 
 router.post('/updateRole', passport.authenticate('jwt', { session: false }), function (req, res, next) {
-	console.log(req.body)
+	// console.log(req.body)
 	User.findOneAndUpdate({ _id: req.body.user }, { $set: { role: req.body.role } }, function (err, succ) {
 		if (err)
 			return res.status(400).send('Error')
@@ -25,10 +25,13 @@ router.post('/updateRole', passport.authenticate('jwt', { session: false }), fun
 * Fix social websites updating to blank if empty being sent
 */
 router.post('/personal', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+	// console.log(req.body.data)
 
 	// removing keys that don't have a value to prevent false updates
 	// removing keys that don't have a value to prevent false updates
 	req.body.data = Object.entries(req.body.data).reduce((a, [k, v]) => (v ? { ...a, [k]: v } : a), {})
+
+	// console.log(req.body.data)
 	// if object is empty then return an error
 	if (Object.entries(req.body.data).length === 0 && req.body.data.constructor === Object) {
 		return res.status(400).send('All Fields Can\'t Be Empty')
@@ -160,7 +163,7 @@ router.delete('/experience/:id', passport.authenticate('jwt', { session: false }
 * PUT route to come after profile page is made!
 */
 router.post('/skills', passport.authenticate('jwt', { session: false }), function (req, res, err) {
-	console.log(req.body.data)
+	// console.log(req.body.data)
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return res.status(400).json({ errors: errors.array() })
@@ -213,11 +216,6 @@ router.post('/honor', passport.authenticate('jwt', { session: false }), function
 	req.body.data.forEach(honor => {
 		arr.push(Object.entries(honor).reduce((a, [k, v]) => (v ? { ...a, [k]: v } : a), {}))
 	})
-	console.log('in here');
-	// const errors = validationResult(req);
-	// if (!errors.isEmpty()) {
-	// 	return res.status(400).json({ errors: errors.array() });
-	// }
 
 	if (arr.length > 0) {
 		arr.forEach(honor => {
@@ -225,7 +223,6 @@ router.post('/honor', passport.authenticate('jwt', { session: false }), function
 				if (err)
 					console.log('Honor can\'t be saved')
 				if (hn) {
-					console.log('honooooooooooooooooor', hn);
 					User.updateOne({ _id: req.body.user.id }, { $addToSet: { honor: hn._id } }, function (err, success) {
 						if (err)
 							console.log(err)

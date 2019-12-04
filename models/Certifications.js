@@ -3,20 +3,16 @@ var Schema = mongoose.Schema
 
 const certificationSchema = new Schema({
 	title: {
-		type: String,
-		required: true
+		type: String
 	},
 	issuer: {
 		type: String,
-		required: true
 	},
 	issueDate: {
-		type: Date,
-		required: true
+		type: Date
 	},
 	expiryDate: {
-		type: Date,
-		required: true
+		type: Date
 	},
 	description: {
 		type: String
