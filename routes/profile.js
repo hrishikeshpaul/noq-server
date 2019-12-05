@@ -24,7 +24,7 @@ router.post('/updateRole', passport.authenticate('jwt', { session: false }), fun
 * Only for name, company/university, website and social websites
 * Fix social websites updating to blank if empty being sent
 */
-router.post('/personal', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+router.post('/personal', function (req, res, next) {
 	// console.log(req.body.data)
 
 	// removing keys that don't have a value to prevent false updates
@@ -58,7 +58,7 @@ router.post('/personal', passport.authenticate('jwt', { session: false }), funct
 /*
 * Only education
 */
-router.post('/education', passport.authenticate('jwt', { session: false }), function (req, res, err) {
+router.post('/education', function (req, res, err) {
 	var arr = []
 	req.body.data.forEach(edu => {
 		arr.push(Object.entries(edu).reduce((a, [k, v]) => (v ? { ...a, [k]: v } : a), {}))
@@ -86,7 +86,7 @@ router.post('/education', passport.authenticate('jwt', { session: false }), func
 	return res.status(201).send('Saved')
 })
 
-router.patch('/education/:id', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+router.patch('/education/:id', function (req, res, next) {
 	Education.findOneAndUpdate({ _id: req.params.id }, { $set: req.body }, function (err, succ) {
 		if (err)
 			return res.status(400).send('Error')
@@ -98,7 +98,7 @@ router.patch('/education/:id', passport.authenticate('jwt', { session: false }),
  * Does not cascade DELETE
 **/
 
-router.delete('/education/:id', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+router.delete('/education/:id', function (req, res, next) {
 	Education.remove({ _id: req.params.id }, function (err, succ) {
 		if (err)
 			return res.status(400).send('Error')
@@ -110,7 +110,7 @@ router.delete('/education/:id', passport.authenticate('jwt', { session: false })
 * Only experience
 * PUT, DELETE route to come after profile page is made!
 */
-router.post('/experience', passport.authenticate('jwt', { session: false }), function (req, res, err) {
+router.post('/experience', function (req, res, err) {
 	var arr = []
 	req.body.data.forEach(edu => {
 		arr.push(Object.entries(edu).reduce((a, [k, v]) => (v ? { ...a, [k]: v } : a), {}))
@@ -138,7 +138,7 @@ router.post('/experience', passport.authenticate('jwt', { session: false }), fun
 	return res.status(201).send('Saved')
 })
 
-router.patch('/experience/:id', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+router.patch('/experience/:id', function (req, res, next) {
 	Experience.findOneAndUpdate({ _id: req.params.id }, { $set: req.body }, function (err, succ) {
 		if (err)
 			return res.status(400).send('Error')
@@ -150,7 +150,7 @@ router.patch('/experience/:id', passport.authenticate('jwt', { session: false })
  * Does not cascade DELETE
  **/
 
-router.delete('/experience/:id', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+router.delete('/experience/:id', function (req, res, next) {
 	Experience.remove({ _id: req.params.id }, function (err, succ) {
 		if (err)
 			return res.status(400).send('Error')
@@ -162,7 +162,7 @@ router.delete('/experience/:id', passport.authenticate('jwt', { session: false }
 * Only skills
 * PUT route to come after profile page is made!
 */
-router.post('/skills', passport.authenticate('jwt', { session: false }), function (req, res, err) {
+router.post('/skills', function (req, res, err) {
 	// console.log(req.body.data)
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -186,7 +186,7 @@ router.post('/skills', passport.authenticate('jwt', { session: false }), functio
 * Post Route to upload a profile picture
 */
 // A single image
-router.post('/picture', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+router.post('/picture', function (req, res, next) {
 
 	imgur.setClientId('77457873b7895a0');
 	imgur.setAPIUrl('https://api.imgur.com/3/');
@@ -211,7 +211,7 @@ router.post('/picture', passport.authenticate('jwt', { session: false }), functi
 /*
 * Only honor
 */
-router.post('/honor', passport.authenticate('jwt', { session: false }), function (req, res, err) {
+router.post('/honor', function (req, res, err) {
 	var arr = []
 	req.body.data.forEach(honor => {
 		arr.push(Object.entries(honor).reduce((a, [k, v]) => (v ? { ...a, [k]: v } : a), {}))
@@ -235,7 +235,7 @@ router.post('/honor', passport.authenticate('jwt', { session: false }), function
 })
 
 
-router.patch('/honor/:id', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+router.patch('/honor/:id', function (req, res, next) {
 	Honor.findOneAndUpdate({ _id: req.params.id }, { $set: req.body }, function (err, succ) {
 		if (err)
 			return res.status(400).send('Error')
@@ -247,7 +247,7 @@ router.patch('/honor/:id', passport.authenticate('jwt', { session: false }), fun
  * Does not cascade DELETE
 **/
 
-router.delete('/honor/:id', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+router.delete('/honor/:id', function (req, res, next) {
 	Honor.deleteOne({ _id: req.params.id }, function (err, succ) {
 		if (err)
 			return res.status(400).send('Error')
@@ -260,7 +260,7 @@ router.delete('/honor/:id', passport.authenticate('jwt', { session: false }), fu
 /*
 * Only Certification
 */
-router.post('/certification', passport.authenticate('jwt', { session: false }), function (req, res, err) {
+router.post('/certification', function (req, res, err) {
 	var arr = []
 	req.body.data.forEach(certificate => {
 		arr.push(Object.entries(certificate).reduce((a, [k, v]) => (v ? { ...a, [k]: v } : a), {}))
@@ -288,7 +288,7 @@ router.post('/certification', passport.authenticate('jwt', { session: false }), 
 })
 
 
-router.patch('/certification/:id', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+router.patch('/certification/:id', function (req, res, next) {
 	Certification.findOneAndUpdate({ _id: req.params.id }, { $set: req.body }, function (err, succ) {
 		if (err)
 			return res.status(400).send('Error')
@@ -300,7 +300,7 @@ router.patch('/certification/:id', passport.authenticate('jwt', { session: false
  * Does not cascade DELETE
 **/
 
-router.delete('/certification/:id', passport.authenticate('jwt', { session: false }), function (req, res, next) {
+router.delete('/certification/:id', function (req, res, next) {
 	Certification.deleteOne({ _id: req.params.id }, function (err, succ) {
 		if (err)
 			return res.status(400).send('Error')

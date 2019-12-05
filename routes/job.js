@@ -93,11 +93,18 @@ router.get('/', function (req, res, next) {
 })
 
 router.post('/', function (req, res, next) {
+	req.body.location = req.body.location.name
 	var newJob = Job(req.body)
+
 	newJob.save(function (err, job) {
-		if (err)
+		if (err) {
+			console.log(err)
 			return res.status(400).send('Error in posting job')
+		}
+			
 		return res.status(204).send(job)
+			
+	
 	})
 })
 

@@ -37,7 +37,7 @@ var UserSchema = new Schema({
 	},
 	isVerified: {
 		type: Boolean,
-		default: false
+		default: true
 	},
 	resetPasswordToken: String,
 	resetPasswordExpires: Date,
