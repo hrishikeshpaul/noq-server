@@ -93,7 +93,7 @@ router.get('/', function (req, res, next) {
 })
 
 router.post('/', function (req, res, next) {
-	req.body.location = req.body.location.name
+	req.body.location = req.body.location
 	var newJob = Job(req.body)
 
 	newJob.save(function (err, job) {
