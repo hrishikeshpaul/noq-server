@@ -7,13 +7,14 @@ var jwt = require('jsonwebtoken');
 var router = express.Router();
 var Job = require("../models/Job");
 var User = require('../models/User');
+var nodemailer = require('nodemailer')
 
 router.get('/', function (req, res, next) {
 	if (req.query.role === 'student') {
 		var jobsToFilter = []
 		User.findOne({ _id: req.query.user })
-		.populate('passed_jobs')
-		.exec(function (err, user) {
+			.populate('passed_jobs')
+			.exec(function (err, user) {
 				// passed jobs shouldn't appear. so getting all the IDs of the jobs that user has passed
 				user.passed_jobs.forEach(job => {
 					jobsToFilter.push(job._id.toString())
@@ -55,40 +56,40 @@ router.get('/', function (req, res, next) {
 		var passedApplicants = []
 
 		Job.find({ employer: req.query.user })
-		.populate('applicants')
-		.exec(function (err, jobs) {
-			if (err)
-				console.log(err)
-			jobs.forEach(job => {
-				job.applicants.forEach(applicant => {
-					applicants.push({
-						applicant: applicant._id.toString(),
-						job: job._id.toString()
-					})
-				})
-			})
-			User.find({ role: 'student' })
-			.populate('experience')
-			.populate('education')
-			.exec(function (err, users) {
+			.populate('applicants')
+			.exec(function (err, jobs) {
 				if (err)
 					console.log(err)
-				var ctr = 0
-				var usersToReturn = []
-				users.forEach(user => {
-					ctr += 1
-					applicants.forEach(applicant => {
-						if (user._id.toString() === applicant.applicant) {
-							user._doc['job'] = applicant.job
-							usersToReturn.push(user)
-						}
+				jobs.forEach(job => {
+					job.applicants.forEach(applicant => {
+						applicants.push({
+							applicant: applicant._id.toString(),
+							job: job._id.toString()
+						})
 					})
-					if (ctr == users.length) {
-						return res.status(200).send(usersToReturn)
-					}
 				})
+				User.find({ role: 'student' })
+					.populate('experience')
+					.populate('education')
+					.exec(function (err, users) {
+						if (err)
+							console.log(err)
+						var ctr = 0
+						var usersToReturn = []
+						users.forEach(user => {
+							ctr += 1
+							applicants.forEach(applicant => {
+								if (user._id.toString() === applicant.applicant) {
+									user._doc['job'] = applicant.job
+									usersToReturn.push(user)
+								}
+							})
+							if (ctr == users.length) {
+								return res.status(200).send(usersToReturn)
+							}
+						})
+					})
 			})
-		})
 	}
 })
 
@@ -101,10 +102,10 @@ router.post('/', function (req, res, next) {
 			console.log(err)
 			return res.status(400).send('Error in posting job')
 		}
-			
+
 		return res.status(204).send(job)
-			
-	
+
+
 	})
 })
 
@@ -136,17 +137,17 @@ router.patch('/reject', function (req, res, next) {
 router.patch('/accept', function (req, res, next) {
 	if (req.body.role === 'student') {
 		var UpdateDict = {}
-		
+
 		Job.updateOne({ _id: req.body.job._id }, { $addToSet: { applicants: mongoose.Types.ObjectId(req.body.user) } }, function (err, success) {
 			if (err)
 				return res.status(400).send('Error')
 			else {
 				var counter = 0
 				req.body.job.skills.forEach(skill => {
-					counter ++
-					User.findOneAndUpdate({_id: req.body.user, 'skills.name': skill.name}, {$inc: {[`skills.$.points`]: 1}}, function (err, donne) {
+					counter++
+					User.findOneAndUpdate({ _id: req.body.user, 'skills.name': skill.name }, { $inc: { [`skills.$.points`]: 1 } }, function (err, donne) {
 						if (err) console.log(err)
-							console.log('done')
+						console.log('done')
 					})
 				})
 			}
@@ -157,6 +158,31 @@ router.patch('/accept', function (req, res, next) {
 		Job.findOneAndUpdate({ _id: req.body.job }, { $pullAll: { applicants: [req.body.userToAccept] }, $addToSet: { confirmed_users: req.body.userToAccept } }, function (err, job) {
 			if (err)
 				return res.status(400).send('Error')
+
+			User.findOne({ _id: req.body.userToAccept }, function (err, user) {
+
+				var transporter = nodemailer.createTransport({
+					service: 'Sendgrid',
+					auth: {
+						user: 'noqjobportal123',
+						pass: 'jobportal12345'
+					}
+				});
+				var mailOptions = {
+					from: 'noq-reply@noq.com',
+					to: user.email,
+					subject: 'noQ Email Verification ',
+					text: 'Hello,\n\n' + 'Congratulations! You have recieved an acceptance from the company :' + job.company
+				}
+				transporter.sendMail(mailOptions, function (err) {
+					if (err) {
+						console.log(err)
+					}
+
+					return res.status(200)
+
+				})
+			})
 			return res.status(204).send('Updated')
 		})
 	}
@@ -180,14 +206,14 @@ router.patch('/rejectconfirmedapplicant', function (req, res, next) {
 })
 
 router.get('/recommendation/:id', function (req, res, next) {
-	User.findOne({_id: req.params.id})
-	.exec(function (err, user) {
-		if (err) console.log(err)
-		else {
-			user.skills.sort((a, b) => parseFloat(b.points) - parseFloat(a.points));
-			res.status(200).send(user.skills[0])
-		}
-	})
+	User.findOne({ _id: req.params.id })
+		.exec(function (err, user) {
+			if (err) console.log(err)
+			else {
+				user.skills.sort((a, b) => parseFloat(b.points) - parseFloat(a.points));
+				res.status(200).send(user.skills[0])
+			}
+		})
 })
 
 module.exports = router
