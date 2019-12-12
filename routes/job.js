@@ -63,31 +63,58 @@ router.get('/', function (req, res, next) {
 				job.applicants.forEach(applicant => {
 					applicants.push({
 						applicant: applicant._id.toString(),
-						job: job._id.toString()
+						job: job,
+						complete: false
 					})
 				})
 			})
-			User.find({ role: 'student' })
-			.populate('experience')
-			.populate('education')
-			.exec(function (err, users) {
-				if (err)
-					console.log(err)
-				var ctr = 0
-				var usersToReturn = []
-				users.forEach(user => {
-					ctr += 1
-					applicants.forEach(applicant => {
-						if (user._id.toString() === applicant.applicant) {
-							user._doc['job'] = applicant.job
-							usersToReturn.push(user)
-						}
-					})
-					if (ctr == users.length) {
-						return res.status(200).send(usersToReturn)
+
+			console.log('hi')
+			ctr = 0
+			var usersToReturn = []
+			applicants.forEach(applicant => {
+				User.findOne({_id: applicant.applicant})
+				.populate('experience')
+				.populate('education')
+				.exec(function (err, user) {
+					if(err) console.log(err)
+					else {
+						user._doc['job'] = applicant.job
+						usersToReturn.push(user)
+						ctr++
+						if (ctr == applicants.length) {
+					return res.status(200).send(usersToReturn)
+				}
 					}
 				})
+
+				
 			})
+
+			
+			// User.find({ role: 'student' })
+			// .populate('experience')
+			// .populate('education')
+			// .exec(function (err, users) {
+			// 	if (err)
+			// 		console.log(err)
+			// 	var ctr = 0
+			// 	var usersToReturn = []
+			// 	users.forEach(user => {
+			// 		ctr += 1
+			// 		applicants.forEach(applicant => {
+			// 			if (user._id.toString() === applicant.applicant && applicant.complete === false) {
+			// 				user._doc['job'] = applicant.job
+			// 				applicant.complete = true
+			// 				usersToReturn.push(user)
+			// 				return 
+			// 			}
+			// 		})
+			// 		if (ctr == users.length) {
+			// 			return res.status(200).send(usersToReturn)
+			// 		}
+			// 	})
+			// })
 		})
 	}
 })
@@ -136,6 +163,7 @@ router.patch('/reject', function (req, res, next) {
 router.patch('/accept', function (req, res, next) {
 	if (req.body.role === 'student') {
 		var UpdateDict = {}
+		console.log(req.body.job)
 		
 		Job.updateOne({ _id: req.body.job._id }, { $addToSet: { applicants: mongoose.Types.ObjectId(req.body.user) } }, function (err, success) {
 			if (err)
@@ -154,6 +182,7 @@ router.patch('/accept', function (req, res, next) {
 				return res.status(204).send('Updated')
 		})
 	} else if (req.body.role === 'employer') {
+		console.log(req.body.job)
 		Job.findOneAndUpdate({ _id: req.body.job }, { $pullAll: { applicants: [req.body.userToAccept] }, $addToSet: { confirmed_users: req.body.userToAccept } }, function (err, job) {
 			if (err)
 				return res.status(400).send('Error')
