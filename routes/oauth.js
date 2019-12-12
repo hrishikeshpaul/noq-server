@@ -157,7 +157,7 @@ router.get("/", (req, res) => {
 
 // Get 'code' querystring parameter and hit data api
 router.get("/callback", async (req, res) => {
-
+	console.log('hi')
 	try {
 
 		linkedInAPI.getAccessToken(req.query.code, req.query.state)
