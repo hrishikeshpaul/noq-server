@@ -176,13 +176,13 @@ router.get("/callback", async (req, res) => {
 									}).save(function (err, user) {
 										if (err)
 											return res.status(401)
-										return res.redirect(`${devURL.client}/${user.email}/${req.query.code}`)
+										return res.redirect(`https://noq-client.herokuapp.com/oauth/${user.email}/${req.query.code}`)
 									})
 								} else {
 									User.updateOne({ email: response[0]["elements"][0]["handle~"]["emailAddress"] }, { $set: { oauthToken: req.query.code } }, function (err, succ) {
 										if (err)
 											return res.status(401)
-										return res.redirect(`${devURL.client}/${user.email}/${req.query.code}`)
+										return res.redirect(`https://noq-client.herokuapp.com/oauth/${user.email}/${req.query.code}`)
 									})
 								}
 							}
