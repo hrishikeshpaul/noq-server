@@ -55,7 +55,7 @@ For more information about using Node.js on Heroku, see these Dev Center article
 ## The Team
 - [Hrishikesh Paul](https://github.com/hrishikeshpaul)
 - [Norton Cole](https://github.com/colen81)
-- [Rui Zhand](https://github.com/ruizhang0)
+- [Rui Zhang](https://github.com/ruizhang0)
 - [Sharanya Ravichandran](https://github.com/sharanya17410)
 
 <!-- CONTRIBUTING -->
